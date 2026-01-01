@@ -1012,6 +1012,9 @@
                 // Update date display visibility
                 this.updateDateVisibility();
                 
+                // Update widget opacity
+                this.updateOpacity();
+                
                 // Listen for changes in localStorage
                 window.addEventListener('storage', (e) => {
                     if (e.key === 'weatherWidgetEnabled') {
@@ -1035,6 +1038,10 @@
                     if (e.key === 'timeFormat') {
                         this.updateTime();
                     }
+                    // Update widget opacity when changed
+                    if (e.key === 'widgetOpacity') {
+                        this.updateOpacity();
+                    }
                 });
             }
 
@@ -1051,6 +1058,24 @@
                 const enabled = localStorage.getItem('dateDisplayEnabled') !== 'false';
                 if (this.dateDisplay) {
                     this.dateDisplay.style.display = enabled ? 'block' : 'none';
+                }
+            }
+            
+            updateOpacity() {
+                const opacity = parseInt(localStorage.getItem('widgetOpacity') || '100');
+                if (this.widget) {
+                    // Apply background opacity to the widget
+                    const bgOpacity = opacity / 100;
+                    this.widget.style.background = `rgba(0, 0, 0, ${bgOpacity * 0.2})`;
+                    
+                    // Make text 20% more opaque than widget (capped at 100%)
+                    const textOpacity = Math.min(opacity + 20, 100) / 100;
+                    
+                    // Apply to all text elements
+                    if (this.timeDisplay) this.timeDisplay.style.opacity = textOpacity;
+                    if (this.dateDisplay) this.dateDisplay.style.opacity = textOpacity;
+                    if (this.weatherIcon) this.weatherIcon.style.opacity = textOpacity;
+                    if (this.tempDisplay) this.tempDisplay.style.opacity = textOpacity;
                 }
             }
 

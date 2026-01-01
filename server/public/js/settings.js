@@ -82,6 +82,21 @@ class SettingsManager {
                                 <button id="tempFahrenheitBtn" class="btn-sm" data-unit="F">°F</button>
                             </div>
                         </div>
+
+                        <!-- Widget Opacity -->
+                        <div>
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="material-symbols-outlined text-2xl">opacity</span>
+                                <div>
+                                    <div class="font-medium">Widget Opacity</div>
+                                    <div class="text-sm text-muted-foreground">Adjust overlay transparency</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <input type="range" id="widgetOpacitySlider" min="0" max="100" value="100" class="flex-1" style="cursor: pointer;">
+                                <span id="opacityValue" class="text-sm font-medium min-w-[3rem] text-right">100%</span>
+                            </div>
+                        </div>
                     </section>
                 </article>
             </dialog>
@@ -218,6 +233,16 @@ class SettingsManager {
         document.getElementById('tempFahrenheitBtn').addEventListener('click', () => {
             this.setTempUnit('F');
         });
+
+        // Widget opacity slider
+        const opacitySlider = document.getElementById('widgetOpacitySlider');
+        const opacityValue = document.getElementById('opacityValue');
+        
+        opacitySlider.addEventListener('input', (e) => {
+            const opacity = e.target.value;
+            opacityValue.textContent = `${opacity}%`;
+            localStorage.setItem('widgetOpacity', opacity);
+        });
     }
 
     setTempUnit(unit) {
@@ -246,6 +271,11 @@ class SettingsManager {
 
         // Temperature unit
         this.updateTempUnitButtons();
+
+        // Widget opacity
+        const opacity = localStorage.getItem('widgetOpacity') || '100';
+        document.getElementById('widgetOpacitySlider').value = opacity;
+        document.getElementById('opacityValue').textContent = `${opacity}%`;
     }
 
     updateTempUnitButtons() {
