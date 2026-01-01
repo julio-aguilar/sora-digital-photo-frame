@@ -157,6 +157,32 @@ class PhotoFrameAdmin {
             this.updateThemeButton(nextMode);
         });
         
+        // Weather Widget Toggle
+        document.getElementById('weatherWidgetToggle').addEventListener('click', () => {
+            const currentState = localStorage.getItem('weatherWidgetEnabled') !== 'false';
+            const newState = !currentState;
+            localStorage.setItem('weatherWidgetEnabled', newState.toString());
+            this.updateWeatherWidgetButton(newState);
+            
+            this.showToast(
+                `Weather widget ${newState ? 'enabled' : 'disabled'}`,
+                'success'
+            );
+        });
+        
+        // Temperature Unit Toggle
+        document.getElementById('tempUnitToggle').addEventListener('click', () => {
+            const currentUnit = localStorage.getItem('temperatureUnit') || 'C';
+            const newUnit = currentUnit === 'C' ? 'F' : 'C';
+            localStorage.setItem('temperatureUnit', newUnit);
+            this.updateTempUnitButton(newUnit);
+            
+            this.showToast(
+                `Temperature unit: °${newUnit}`,
+                'success'
+            );
+        });
+        
         document.getElementById('confirmUploadBtn').addEventListener('click', () => this.uploadFiles());
         document.getElementById('cancelUploadBtn').addEventListener('click', () => this.hideUploadModal());
         document.getElementById('uploadDropZone').addEventListener('click', () => document.getElementById('fileInput').click());
@@ -294,6 +320,12 @@ class PhotoFrameAdmin {
         
         // Initialize theme button on page load
         this.updateThemeButton(localStorage.getItem('themeMode') || 'system');
+        
+        // Initialize weather widget button on page load
+        this.updateWeatherWidgetButton(localStorage.getItem('weatherWidgetEnabled') !== 'false');
+        
+        // Initialize temperature unit button on page load
+        this.updateTempUnitButton(localStorage.getItem('temperatureUnit') || 'C');
     }
 
     updateThemeButton(mode) {
@@ -314,6 +346,29 @@ class PhotoFrameAdmin {
                 themeButton.title = 'Switch to light mode';
                 break;
         }
+    }
+    
+    updateWeatherWidgetButton(enabled) {
+        const button = document.getElementById('weatherWidgetToggle');
+        const icon = document.getElementById('weatherWidgetIcon');
+        
+        if (enabled) {
+            button.style.opacity = '1';
+            button.title = 'Weather Widget: ON (Click to disable)';
+            icon.textContent = 'wb_sunny';
+        } else {
+            button.style.opacity = '0.5';
+            button.title = 'Weather Widget: OFF (Click to enable)';
+            icon.textContent = 'wb_sunny';
+        }
+    }
+    
+    updateTempUnitButton(unit) {
+        const button = document.getElementById('tempUnitToggle');
+        const text = document.getElementById('tempUnitText');
+        
+        text.textContent = `°${unit}`;
+        button.title = `Temperature Unit: °${unit} (Click to switch)`;
     }
 
     setupUploadDragAndDrop() {
