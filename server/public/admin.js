@@ -170,6 +170,19 @@ class PhotoFrameAdmin {
             );
         });
         
+        // Date Display Toggle
+        document.getElementById('dateDisplayToggle').addEventListener('click', () => {
+            const currentState = localStorage.getItem('dateDisplayEnabled') !== 'false';
+            const newState = !currentState;
+            localStorage.setItem('dateDisplayEnabled', newState.toString());
+            this.updateDateDisplayButton(newState);
+            
+            this.showToast(
+                `Date display ${newState ? 'enabled' : 'disabled'}`,
+                'success'
+            );
+        });
+        
         // Temperature Unit Toggle
         document.getElementById('tempUnitToggle').addEventListener('click', () => {
             const currentUnit = localStorage.getItem('temperatureUnit') || 'C';
@@ -324,6 +337,9 @@ class PhotoFrameAdmin {
         // Initialize weather widget button on page load
         this.updateWeatherWidgetButton(localStorage.getItem('weatherWidgetEnabled') !== 'false');
         
+        // Initialize date display button on page load
+        this.updateDateDisplayButton(localStorage.getItem('dateDisplayEnabled') !== 'false');
+        
         // Initialize temperature unit button on page load
         this.updateTempUnitButton(localStorage.getItem('temperatureUnit') || 'C');
     }
@@ -360,6 +376,21 @@ class PhotoFrameAdmin {
             button.style.opacity = '0.5';
             button.title = 'Weather Widget: OFF (Click to enable)';
             icon.textContent = 'wb_sunny';
+        }
+    }
+    
+    updateDateDisplayButton(enabled) {
+        const button = document.getElementById('dateDisplayToggle');
+        const icon = document.getElementById('dateDisplayIcon');
+        
+        if (enabled) {
+            button.style.opacity = '1';
+            button.title = 'Date Display: ON (Click to disable)';
+            icon.textContent = 'calendar_today';
+        } else {
+            button.style.opacity = '0.5';
+            button.title = 'Date Display: OFF (Click to enable)';
+            icon.textContent = 'calendar_today';
         }
     }
     

@@ -170,6 +170,20 @@
             font-weight: 600;
             line-height: 1;
         }
+        
+        .date-display {
+            font-size: 0.85rem;
+            font-weight: 400;
+            opacity: 0.8;
+            margin-top: 0.15rem;
+            line-height: 1;
+        }
+        
+        .time-section {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
 
         .weather-display {
             display: flex;
@@ -298,7 +312,10 @@
 
         <!-- Weather and Clock Widget -->
         <div class="weather-widget" id="weatherWidget">
-            <div class="time-display" id="timeDisplay">--:--</div>
+            <div class="time-section">
+                <div class="time-display" id="timeDisplay">--:--</div>
+                <div class="date-display" id="dateDisplay">---</div>
+            </div>
             <div class="weather-display">
                 <span class="weather-icon" id="weatherIcon"></span>
                 <span id="tempDisplay">--°</span>
@@ -958,6 +975,7 @@
         class WeatherWidget {
             constructor() {
                 this.timeDisplay = document.getElementById('timeDisplay');
+                this.dateDisplay = document.getElementById('dateDisplay');
                 this.weatherIcon = document.getElementById('weatherIcon');
                 this.tempDisplay = document.getElementById('tempDisplay');
                 this.widget = document.getElementById('weatherWidget');
@@ -982,6 +1000,9 @@
                     this.hide();
                 }
                 
+                // Update date display visibility
+                this.updateDateVisibility();
+                
                 // Listen for changes in localStorage
                 window.addEventListener('storage', (e) => {
                     if (e.key === 'weatherWidgetEnabled') {
@@ -997,6 +1018,10 @@
                     if (e.key === 'temperatureUnit' && this.weatherData) {
                         this.updateTemperatureDisplay();
                     }
+                    // Update date display when toggled
+                    if (e.key === 'dateDisplayEnabled') {
+                        this.updateDateVisibility();
+                    }
                 });
             }
 
@@ -1007,6 +1032,13 @@
             hide() {
                 if (this.widget) this.widget.style.display = 'none';
                 this.cleanup();
+            }
+            
+            updateDateVisibility() {
+                const enabled = localStorage.getItem('dateDisplayEnabled') !== 'false';
+                if (this.dateDisplay) {
+                    this.dateDisplay.style.display = enabled ? 'block' : 'none';
+                }
             }
 
             cleanup() {
@@ -1036,6 +1068,11 @@
                 const hours = now.getHours().toString().padStart(2, '0');
                 const minutes = now.getMinutes().toString().padStart(2, '0');
                 this.timeDisplay.textContent = `${hours}:${minutes}`;
+                
+                // Update date (e.g., "Mon, Jan 1")
+                const options = { weekday: 'short', month: 'short', day: 'numeric' };
+                const dateStr = now.toLocaleDateString('en-US', options);
+                this.dateDisplay.textContent = dateStr;
             }
 
             async getLocation() {
